@@ -40,7 +40,7 @@ No* criarNo(int level, char verbe[50], char defin[140]){
     
     //Inicializando o arranjo com null
     for(int i = 0; i < (p->level+1); i++)
-        p->forward[i] = 0;
+        p->forward[i] = NULL;
     
     //Atribuindo os dados para o nó
     strcpy(p->verbe, verbe);
@@ -67,7 +67,7 @@ No* procurar(Skip* sl, char busca[50]){
     for(int i = x->level; i >= 0; i--){
         
         //Enquanto não achou o verbete e forward[i] não é null
-        while(x->forward[i] != 0 && strcmp(x->forward[i]->verbe, busca) < 0)
+        while(x->forward[i] != NULL && strcmp(x->forward[i]->verbe, busca) < 0)
             x = x->forward[i];
     
     }
@@ -83,7 +83,7 @@ No* procurar(Skip* sl, char busca[50]){
 void existe(Skip* sl, char busca[50]){
     No* p = procurar(sl, busca); //Ponteiro que pode ou não estar apontando para o verbete
     
-    if(p != 0){//Verifica se é diferente de null
+    if(p != NULL){//Verifica se é diferente de null
         if(strcmp(p->verbe, busca) == 0){ // Se o verbete do ponteiro condiz com o procurado
             printf("%s %s\n", busca, p->defin);
             return; //Sai da função
@@ -96,8 +96,9 @@ void existe(Skip* sl, char busca[50]){
 void alterar(Skip *sl, char busca[50], char alterar[140]){
     No *p = procurar(sl, busca);//Ponteiro que pode ou não estar apontando para o verbete
 
-    if(p != 0){ // Verifica se é diferente de null
+    if(p != NULL){ // Verifica se é diferente de null
         if(strcmp(p->verbe, busca) == 0){ // Se o verbete do ponteiro condiz com o procurado
+            memset(p->defin, 0, strlen(p->defin));
             strcpy(p->defin, alterar); // Troca
             return; //Sai da função
         }
@@ -111,6 +112,9 @@ void inserir(Skip* sl, char verbe[50], char defin[140]){
     //Arranjo que atualiza os nós de forward
     No *update[MAXLVL+1];
     
+    for(int i = 0; i < MAXLVL+1; i++)
+        update[i] = NULL;
+
     //Aponta para o cabeçalho
     No* x = sl->header;
 
@@ -120,7 +124,7 @@ void inserir(Skip* sl, char verbe[50], char defin[140]){
     for(int i = level; i >= 0; i--){
 
         //Enquanto não achou o verbete e forward[i] não é null
-        while(x->forward[i] != 0 && strcmp(x->forward[i]->verbe, verbe) < 0)
+        while(x->forward[i] != NULL && strcmp(x->forward[i]->verbe, verbe) < 0)
             x = x->forward[i];
         
         // Guarda o nó que vai ser atualizado
@@ -130,7 +134,7 @@ void inserir(Skip* sl, char verbe[50], char defin[140]){
     x = x->forward[0];
 
     // Caso ponteiro seja null ou x->verbe não seja igual ao verbete a ser inserido
-    if(x == 0 || strcmp(x->verbe, verbe) != 0){
+    if(x == NULL || strcmp(x->verbe, verbe) != 0){
 
         int novoLvl = randomLvl(); //Nível do novo nó
 
@@ -172,6 +176,9 @@ void remover(Skip *sl, char verbe[50]){
     //Arranjo que atualiza os nós de forward
     No *update[MAXLVL+1];
 
+    for(int i = 0; i < MAXLVL+1; i++)
+        update[i] = NULL;
+
     //Aponta para o cabeçalho
     No *x = sl->header;
 
@@ -181,7 +188,7 @@ void remover(Skip *sl, char verbe[50]){
     for(int i = level; i >= 0; i--){
 
         //Enquanto não achou o verbete e forward[i] não é null
-        while(x->forward[i] != 0 && strcmp(x->forward[i]->verbe, verbe) < 0)
+        while(x->forward[i] != NULL && strcmp(x->forward[i]->verbe, verbe) < 0)
             x = x->forward[i];
 
         // Guarda o nó que vai ser atualizado
@@ -192,7 +199,7 @@ void remover(Skip *sl, char verbe[50]){
 
     // Caso ponteiro seja diferente null ou x->verbe
     // seja igual ao verbete a ser apagado
-    if(x != 0 && strcmp(x->verbe, verbe) == 0){
+    if(x != NULL && strcmp(x->verbe, verbe) == 0){
         
         // Atualiza os ponteiros da skip list
         for(int i = 0; i <= level; i++){
@@ -221,7 +228,7 @@ void impressao(Skip *sl, char ch){
     while (x && x->forward[0] != sl->header){ // Percorre os ponteiros
         if(x->forward[0]){ //Caso não seja null
             if(x->forward[0]->verbe[0] == ch){ //Verifica se o primeiro char da verbe é igual ao ch
-                printf("%s %s\n", x->forward[1]->verbe, x->forward[0]->defin); // Imprime
+                printf("%s %s\n", x->forward[0]->verbe, x->forward[0]->defin); // Imprime
                 flag = 1; //Caso exista pelo menos uma palavra começada com ch
             }
         }
@@ -236,14 +243,14 @@ void impressao(Skip *sl, char ch){
 //Função que chama todas as operações
 void operacao(char op[15], Skip *sl){
     char ch, string1[50], string2[140];
-    
+
     if(strcmp(op, "insercao") == 0){
-        scanf("%s %[^\n]s", string1, string2);
+        scanf("%s %[^\n\t]s", string1, string2);
         getchar();
         inserir(sl, string1, string2);
     } 
     else if(strcmp(op, "alteracao") == 0){
-        scanf("%s %[^\n]s", string1, string2);
+        scanf("%s %[^\n\t]s", string1, string2);
         getchar();
         alterar(sl, string1, string2);
     }

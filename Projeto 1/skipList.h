@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define P 0.5 // Porcentagem de chance da execução do laço -> 50%
-#define MAXLVL 5 // Número máximo de níveis
+#define MAXLVL 24 // Número máximo de níveis
 
 // Nó
 typedef struct node {

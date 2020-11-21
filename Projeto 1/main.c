@@ -3,14 +3,16 @@
 int main(int argc, char* argv[]){
     
     Skip *l = criarSkip();
-    char op[15];
+    char *op = calloc(15, sizeof(char));
     
-    srand(1247);
+    srand(time(0));
     
     while(!feof(stdin)){
+        op = calloc(15, sizeof(char));
         scanf("%s", op);
         getchar();
         operacao(op, l);
+        free(op);
     }
 
     return 0;
